@@ -6,9 +6,21 @@ import {
   deleteContact,
   patchContact,
 } from '../services/contacts.js';
+import { validateContactId } from '../validation/validateContactId.js';
+import { validateQuery } from '../middlewares/validateBody.js';
+import { validatePaginationSchema } from '../validation/validateSchemas.js';
 
 export const getContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage, sortOrder, sortBy, ...other } = req.query;
+  await validateQuery(validatePaginationSchema);
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortOrder,
+    sortBy,
+    filter: other,
+  });
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -17,7 +29,8 @@ export const getContactsController = async (req, res) => {
 };
 export const getContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const id = validateContactId(contactId);
+  const contact = await getContactById(id);
 
   if (!contact) {
     next(createHttpError(404, 'Contact not found'));
