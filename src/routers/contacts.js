@@ -6,7 +6,7 @@ import {
   postContactController,
   patchContactController,
 } from '../controllers/contacts.js';
-import { validateBody } from '../middlewars/validateBody.js';
+import { validateBody } from '../middlewares/validateBody.js';
 import {
   createPostContactSchema,
   updateContactSchema,
