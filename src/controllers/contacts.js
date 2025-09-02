@@ -1,68 +1,88 @@
+import createHttpError from 'http-errors';
 import {
-  loginUser,
-  logout,
-  refreshToken,
-  registerUser,
-} from '../services/auth.js';
+  getAllContacts,
+  getContactById,
+  postContact,
+  deleteContact,
+  patchContact,
+} from '../services/contacts.js';
+import { validateContactId } from '../validation/validateContactId.js';
+import { validateQuery } from '../middlewares/validateBody.js';
+import { validatePaginationSchema } from '../validation/validateSchemas.js';
 
-export const authRegisterController = async (req, res) => {
-  const user = await registerUser(req.body);
+export const getContactsController = async (req, res) => {
+  const userId = req.user._id;
+  const { page, perPage, sortOrder, sortBy, ...other } = req.query;
+  await validateQuery(validatePaginationSchema);
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortOrder,
+    sortBy,
+    filter: { ...other, userId },
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
+};
+export const getContactByIdController = async (req, res, next) => {
+  const userId = req.user._id;
+  const { contactId } = req.params;
+  const id = validateContactId(contactId);
+  const contact = await getContactById(id, userId);
+
+  if (!contact) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+
+  res.json({
+    status: 200,
+    message: `Successfully found contact with id ${contactId}!`,
+    data: contact,
+  });
+};
+
+export const deleteContactController = async (req, res, next) => {
+  const userId = req.user._id;
+  const { contactId } = req.params;
+  const contactToDelete = await deleteContact(contactId, userId);
+
+  if (!contactToDelete) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+  res.json(204);
+};
+
+export const postContactController = async (req, res) => {
+  const contact = await postContact({
+    ...req.body,
+    userId: req.user._id,
+  });
 
   res.status(201).json({
     status: 201,
-    message: 'Successfully registered a user!',
-    data: user,
+    message: 'Successfully created a contact!',
+    data: contact,
   });
 };
 
-export const authLoginController = async (req, res) => {
-  const session = await loginUser(req.body);
+export const patchContactController = async (req, res, next) => {
+  const userId = req.user._id;
+  const { contactId } = req.params;
+  const result = await patchContact(contactId, req.body, userId);
 
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: session.accessTokenValidUntil,
-  });
-
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: session.refreshTokenValidUntil,
-  });
-
-  res.status(200).json({
+  if (!result) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+  res.json({
     status: 200,
-    message: 'Successfully logged in an user!',
-    data: { accessToken: session.accessToken },
+    message: 'Successfully patched a contact!',
+    data: result,
   });
-};
-
-export const refreshTokenController = async (req, res) => {
-  const session = await refreshToken({
-    sessionId: req.cookies.sessionId,
-    refreshToken: req.cookies.refreshToken,
-  });
-
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: session.accessTokenValidUntil,
-  });
-
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: session.refreshTokenValidUntil,
-  });
-
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully refreshed a session!',
-    data: { accessToken: session.accessToken },
-  });
-};
-
-export const logoutController = async (req, res) => {
-  if (req.cookies.sessionId) await logout(req.cookies.sessionId);
-
-  res.clearCookie('sessionId');
-  res.clearCookie('refreshToken');
-
-  return res.status(204).send();
 };
