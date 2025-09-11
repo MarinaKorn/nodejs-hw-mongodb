@@ -60,16 +60,20 @@ export async function deleteContact(contactId, userId) {
   return contact;
 }
 
-export async function postContact(payload) {
-  const contact = await contactsCollection.create(payload);
+export async function postContact({ payload, userId }) {
+  const contact = await contactsCollection.create({ userId, ...payload });
   return contact;
 }
 
 export async function patchContact(contactId, payload, userId, options = {}) {
   const contact = await contactsCollection.findOneAndUpdate(
     { _id: contactId, userId },
-    payload,
-    { new: true },
+    { $set: payload },
+    {
+      new: true,
+      runValidators: true,
+      ...options,
+    },
   );
 
   return contact;

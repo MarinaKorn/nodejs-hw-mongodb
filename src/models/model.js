@@ -1,4 +1,5 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
+import { UserCollection } from './user.js';
 
 const schema = new Schema(
   {
@@ -13,6 +14,9 @@ const schema = new Schema(
     email: {
       type: String,
     },
+    photo: {
+      type: String,
+    },
     isFavourite: {
       type: Boolean,
       default: false,
@@ -22,6 +26,11 @@ const schema = new Schema(
       required: true,
       default: 'personal',
       enum: ['work', 'home', 'personal'],
+    },
+    userId: {
+      type: Types.ObjectId,
+      ref: UserCollection,
+      required: true,
     },
   },
   {

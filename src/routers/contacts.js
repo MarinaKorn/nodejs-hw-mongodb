@@ -13,10 +13,11 @@ import {
 } from '../validation/validateSchemas.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { checkPermissions } from '../middlewares/checkPermissions.js';
+import { uploads } from '../middlewares/multer.js';
 
 const router = Router();
 
-router.use(authenticate);
+router.use('/contacts', authenticate);
 
 router.use('/contscts/:contactId', checkPermissions);
 
@@ -28,12 +29,14 @@ router.delete('/contacts/:contactId', deleteContactController);
 
 router.post(
   '/contacts',
+  uploads.single('photo'),
   validateBody(createPostContactSchema),
   postContactController,
 );
 
 router.patch(
   '/contacts/:contactId',
+  uploads.single('photo'),
   validateBody(updateContactSchema),
   patchContactController,
 );
