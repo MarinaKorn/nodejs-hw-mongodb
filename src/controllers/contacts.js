@@ -7,7 +7,7 @@ import {
   patchContact,
 } from '../services/contacts.js';
 import { validateContactId } from '../validation/validateContactId.js';
-import { validateQuery } from '../middlewares/validateBody.js';
+import { validateQuery } from '../middlewars/validateBody.js';
 import { validatePaginationSchema } from '../validation/validateSchemas.js';
 
 export const getContactsController = async (req, res) => {
