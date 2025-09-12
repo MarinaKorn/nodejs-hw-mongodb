@@ -4,8 +4,8 @@ import pino from 'pino-http';
 import cookieParser from 'cookie-parser';
 import { getEnvVar } from './utils/getEnv.js';
 import router from './routers/contacts.js';
-import { errorHandler } from './middlewars/errorHandler.js';
-import { notFoundErr } from './middlewars/notFoundError.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundErr } from './middlewares/notFoundError.js';
 import { authRouter } from './routers/auth.js';
 import { UPLOAD_DIR } from './constants/index.js';
 
