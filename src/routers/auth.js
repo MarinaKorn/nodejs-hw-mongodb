@@ -9,7 +9,7 @@ import {
   resetPasswordController,
   sendResetEmailController,
 } from '../controllers/auth.js';
-import { validateBody } from '../middlewars/validateBody.js';
+import { validateBody } from '../middlewares/validateBody.js';
 import {
   loginValidationSchema,
   loginWithGoogleOAuthSchema,
