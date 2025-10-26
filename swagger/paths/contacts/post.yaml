@@ -6,6 +6,7 @@ description: 'Create a contact with payload'
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     multipart/form-data:
       schema:
@@ -21,7 +22,7 @@ requestBody:
             type: string
             example: 'John Doe'
           email:
-            description: Contact's email
+            description: "Contact's email"
             type: string
             example: 'example@gmail.com'
           phoneNumber:
@@ -29,7 +30,7 @@ requestBody:
             type: string
             example: '+380660616897'
           contactType:
-            description: Contact's type
+            description: "Contact's type"
             type: string
             enum: ['work', 'home', 'personal']
           userId:
@@ -37,7 +38,7 @@ requestBody:
             type: string
             example: 65e4decdd286b30065d54af9
           photo:
-            description: "Link to contact's photo"
+            description: "Contact's photo file"
             type: string
             format: binary
 responses:
@@ -59,7 +60,6 @@ responses:
               type: string
               example: Successfully created a contact!
             data:
-              type: object
               $ref: ../../components/schemas/contact.yaml
   '401':
-    $ref: '../../components/responses/401.yaml'
+    $ref: ../../components/responses/401.yaml
