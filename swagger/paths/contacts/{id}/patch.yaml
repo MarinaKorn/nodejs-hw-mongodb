@@ -23,7 +23,7 @@ requestBody:
             type: string
             example: 'John Doe'
           email:
-            description: Contact's email
+            description: "Contact's email"
             type: string
             example: 'example@gmail.com'
           phoneNumber:
@@ -31,7 +31,7 @@ requestBody:
             type: string
             example: '+380660616897'
           contactType:
-            description: Contact's type
+            description: "Contact's type"
             type: string
             enum: ['work', 'home', 'personal']
           photo:
@@ -57,7 +57,6 @@ responses:
               type: string
               example: Successfully patched a contact!
             data:
-              type: object
               $ref: '../../../components/schemas/contact.yaml'
   '401':
     $ref: '../../../components/responses/401.yaml'
